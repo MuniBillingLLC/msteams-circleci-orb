@@ -1,0 +1,34 @@
+{
+  "type": "message",
+  "attachments": [
+    {
+      "contentType": "application/vnd.microsoft.card.adaptive",
+      "content": {
+        "type": "AdaptiveCard",
+        "body": [
+          {
+            "type": "Container",
+            "style": "default",
+            "items": [
+              {
+                "type": "TextBlock",
+                "text": "A sample user-made custom template for testing."
+              },
+              {
+                "type": "FactSet",
+                "facts": [
+                  {
+                    "title": "Job:",
+                    "value": "${CIRCLE_JOB}"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "actions": [],
+        "msteams": {}
+      }
+    }
+  ]
+}

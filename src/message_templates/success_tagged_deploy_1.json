@@ -1,0 +1,92 @@
+{
+  "type": "message",
+  "attachments": [
+    {
+      "contentType": "application/vnd.microsoft.card.adaptive",
+      "content": {
+        "type": "AdaptiveCard",
+        "body": [
+          {
+            "type": "Container",
+            "style": "default",
+            "items": [
+              {
+                "type": "TextBlock",
+                "size": "Medium",
+                "weight": "Bolder",
+                "wrap": true,
+                "text": "Deployment Successful! 🎉"
+              },
+              {
+                "type": "ColumnSet",
+                "columns": [
+                  {
+                    "type": "Column",
+                    "items": [
+                      {
+                        "type": "FactSet",
+                        "facts": [
+                          {
+                            "title": "Project:",
+                            "value": "${CIRCLE_PROJECT_REPONAME}"
+                          },
+                          {
+                            "title": "When:",
+                            "value": "$(date +'%m/%d/%Y %T')"
+                          },
+                          {
+                            "title": "Tag:",
+                            "value": "${CIRCLE_TAG}"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Column",
+                    "width": "90px",
+                    "items": [
+                      {
+                        "type": "Image",
+                        "url": "https://production-cci-com.imgix.net/blog/media/circle-logo-badge-black.png",
+                        "altText": "CircleCI Logo"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "FactSet",
+                "facts": [
+                  {
+                    "title": "Mentions:",
+                    "value": "<at>${MSTEAMS_PARAM_MENTIONS}</at>"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "actions": [
+          {
+            "type": "Action.OpenUrl",
+            "title": "View Job",
+            "url": "${CIRCLE_BUILD_URL}"
+          }
+        ],
+        "msteams": {
+          "entities": [
+            {
+              "type": "text",
+              "text": "<at>${MSTEAMS_PARAM_MENTIONS}</at>",
+              "mentioned": {
+                "id": "${MSTEAMS_PARAM_MENTIONS}",
+                "name": "${MSTEAMS_PARAM_MENTIONS}"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

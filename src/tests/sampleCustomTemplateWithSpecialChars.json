@@ -1,0 +1,25 @@
+{
+  "type": "message",
+  "attachments": [
+    {
+      "contentType": "application/vnd.microsoft.card.adaptive",
+      "content": {
+        "type": "AdaptiveCard",
+        "body": [
+          {
+            "type": "Container",
+            "style": "default",
+            "items": [
+              {
+                "type": "TextBlock",
+                "text": "These asterisks are not `glob`  patterns **t** (parentheses'). [Link](https://example.org)"
+              }
+            ]
+          }
+        ],
+        "actions": [],
+        "msteams": {}
+      }
+    }
+  ]
+}

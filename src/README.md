@@ -1,26 +1,38 @@
-# Orb Source
+# MS Teams - CircleCI Orb Source
 
-Orbs are shipped as individual `orb.yml` files, however, to make development easier, it is possible to author an orb in _unpacked_ form, which can be _packed_ with the CircleCI CLI and published.
+This Orb is a client for Microsoft Teams.  It was created by an org that
+migrated from Slack to Teams and wanted to keep functionality in the Slack Orb
+that was missing from the existing options for MS Teams such as:
+  * Ability to `@` or mention a user
+  * Ability to override the default template with a custom template
+  * Ability to keep the on-hold functionality
 
-The default `.circleci/config.yml` file contains the configuration code needed to automatically pack, test, and deploy any changes made to the contents of the orb source in this directory.
 
-## @orb.yml
+You must define a `MSTEAMS_WEBHOOK` variable to use this Orb.  You need to
+follow this How To in order to setup an integration in MS Teams that will let
+you post a message to a Teams channel from a Webhook:
+https://support.microsoft.com/en-us/office/create-incoming-webhooks-with-workflows-for-microsoft-teams-8ae491c7-0394-4861-ba59-055e33f75498
 
-This is the entry point for our orb "tree", which becomes our `orb.yml` file later.
 
-Within the `@orb.yml` we generally specify 4 configuration keys
+In order to use this Orb, you basically use it like the Slack orb, but rename
+everything that begins with `SLACK_` to begin with `MSTEAMS_`.  Also, the
+`on-hold` job has been renamed to `on_hold` b/c CircleCI doesn't allow dashes
+in the name of a job for an Orb.
 
-**Keys**
 
-1. **version**
-    Specify version 2.1 for orb-compatible configuration `version: 2.1`
-2. **description**
-    Give your orb a description. Shown within the CLI and orb registry
-3. **display**
-    Specify the `home_url` referencing documentation or product URL, and `source_url` linking to the orb's source repository.
-4. **orbs**
-    (optional) Some orbs may depend on other orbs. Import them here.
+There is some functionality that was *NOT IMPLEMENTED* from the Slack Orb:
+  * Thread functionality (the ability to send follow up messages as threaded
+    responses).  This seemed really complicated and threads aren't that great
+    in Teams so no attempt was made.
+  * The ability to target a specific channel (or numerous channels).
+    * This Orb relies on a Webhook URL which is tied to single MS Teams
+      channel
+  * The ability to schedule a message for delivery at a later time
 
-## See:
- - [Orb Author Intro](https://circleci.com/docs/2.0/orb-author-intro/#section=configuration)
- - [Reusable Configuration](https://circleci.com/docs/2.0/reusing-config)
+
+Additionally, this integration uses the "Adaptive Card" format / spec defined
+here: https://adaptivecards.io/explorer/
+
+
+The Slack Orb sourcecode was used to help build this Orb:
+https://github.com/CircleCI-Public/slack-orb

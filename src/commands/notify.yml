@@ -1,0 +1,120 @@
+description: |
+  Notify a MS Teams channel with a custom message.
+  The environment variable MSTEAMS_WEBHOOK must be set for this orb to work.
+  For instructions on how to set them, follow the guide here:
+  https://support.microsoft.com/en-us/office/create-incoming-webhooks-with-workflows-for-microsoft-teams-8ae491c7-0394-4861-ba59-055e33f75498.
+
+parameters:
+  template:
+    description: |
+      Select which template to use for the notification by its name. The name must be available as an environment variable.
+      Alternatively, you can create and use your own custom template.
+      If left empty and no custom template is provided, the template will be automatically selected based on the job status.
+    type: string
+    default: ""
+  custom:
+    description: |
+      Enter a custom message template.
+
+      Must be Adaptive Card format.  See https://adaptivecards.io/explorer/ for
+      more details
+    type: string
+    default: ""
+  event:
+    description: |
+      In what event should this message send? Options: ["fail", "pass", "always"]
+    type: enum
+    enum: ["fail", "pass", "always"]
+    default: "always"
+  branch_pattern:
+    description: |
+      A comma separated list of regex matchable branch names. Notifications will only be sent if sent from a job from these branches. Pattern must match the full string, no partial matches.
+    type: string
+    default: ""
+  tag_pattern:
+    description: |
+      A comma separated list of regex matchable tag names. Notifications will only be sent if sent from a job from these branches. Pattern must match the full string, no partial matches.
+    type: string
+    default: ""
+  invert_match:
+    description: |
+      Invert the branch and tag patterns.
+      If set to true, notifications will only be sent if sent from a job from branches and tags that do not match the patterns.
+    type: boolean
+    default: false
+  mentions:
+    description: |
+      Exports to the "$MSTEAMS_PARAM_MENTIONS" environment variable for use in templates.
+      Mention users via their userPrincipalName.
+      The userPrincipalName is typically their email address
+    type: string
+    default: ""
+  ignore_errors:
+      description: |
+        Ignore errors posting to MS Teams.
+        Disable to catch initial setup errors. Re-enable to prevent MS Teams errors from affecting your pipeline.
+      type: boolean
+      default: true
+  debug:
+      description: |
+       Runs scripts in debug mode for bash.
+       Enable to view full payload being sent to MS Teams and response being received from HTTP request.
+       Redacted content can be viewed by re-running the job with SSH and accessing the log files referenced in the job output.
+       When run in a persistent build environment such as CircleCI Runner, these debug log files may remain in the system's temporary filesystem indefinitely and accumulate over time.
+      type: boolean
+      default: false
+  circleci_host:
+      description: |
+       A CircleCI Host which used in a message template.
+      type: string
+      default: https://circleci.com
+  step_name:
+    type: string
+    default: MS Teams - Sending Notification
+    description: Specify a custom step name for this command, if desired
+  retries:
+    type: integer
+    default: 0
+    description: The amount of retries when posting the message to MS Teams. Defaults to zero.
+  retry_delay:
+      type: integer
+      default: 30
+      description: The amount of seconds to wait between retries. Defaults to 30.
+steps:
+  - run:
+      shell: bash -eo pipefail
+      when: on_fail
+      name: MS Teams - Detecting Job Status (FAIL)
+      command: |
+        echo 'export CCI_STATUS="fail"' > /tmp/MSTEAMS_JOB_STATUS
+  - run:
+      shell: bash -eo pipefail
+      when: on_success
+      name: MS Teams - Detecting Job Status (PASS)
+      command: |
+        echo 'export CCI_STATUS="pass"' > /tmp/MSTEAMS_JOB_STATUS
+  - run:
+      when: always
+      shell: bash -eo pipefail
+      name: << parameters.step_name >>
+      environment:
+        MSTEAMS_PARAM_RETRIES: <<parameters.retries>>
+        MSTEAMS_PARAM_RETRY_DELAY: <<parameters.retry_delay>>
+        MSTEAMS_PARAM_EVENT: "<<parameters.event>>"
+        MSTEAMS_PARAM_TEMPLATE: "<<parameters.template>>"
+        MSTEAMS_PARAM_CUSTOM: "<<parameters.custom>>"
+        MSTEAMS_PARAM_MENTIONS: "<<parameters.mentions>>"
+        MSTEAMS_PARAM_BRANCHPATTERN: "<<parameters.branch_pattern>>"
+        MSTEAMS_PARAM_TAGPATTERN: "<<parameters.tag_pattern>>"
+        MSTEAMS_PARAM_INVERT_MATCH: "<<parameters.invert_match>>"
+        MSTEAMS_PARAM_IGNORE_ERRORS: "<<parameters.ignore_errors>>"
+        MSTEAMS_PARAM_DEBUG: "<<parameters.debug>>"
+        MSTEAMS_PARAM_CIRCLECI_HOST: "<<parameters.circleci_host>>"
+        MSTEAMS_SCRIPT_NOTIFY: "<<include(scripts/notify.sh)>>"
+        MSTEAMS_SCRIPT_UTILS: "<<include(scripts/utils.sh)>>"
+        # import pre-built templates using the orb-pack local script include.
+        basic_fail_1: "<<include(message_templates/basic_fail_1.json)>>"
+        success_tagged_deploy_1: "<<include(message_templates/success_tagged_deploy_1.json)>>"
+        basic_on_hold_1: "<<include(message_templates/basic_on_hold_1.json)>>"
+        basic_success_1: "<<include(message_templates/basic_success_1.json)>>"
+      command: <<include(scripts/main.sh)>>
