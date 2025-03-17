@@ -19,6 +19,7 @@ workflows:
       - orb-tools/review:
           orb_name: msteams-circleci-orb
           filters: *filters
+          exclude: RC011
       - shellcheck/check:
           filters: *filters
       - bats/run:

@@ -5,7 +5,7 @@ description: >
 usage:
   version: 2.1
   orbs:
-    msteams: munibillingllc/msteams-circleci-orb@0.1.13
+    msteams: munibillingllc/msteams-circleci-orb@0.1.14
   jobs:
     build:
       machine: true
