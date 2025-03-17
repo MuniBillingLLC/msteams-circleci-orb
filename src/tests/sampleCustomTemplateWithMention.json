@@ -1,0 +1,41 @@
+{
+  "type": "message",
+  "attachments": [
+    {
+      "contentType": "application/vnd.microsoft.card.adaptive",
+      "content": {
+        "type": "AdaptiveCard",
+        "body": [
+          {
+            "type": "Container",
+            "style": "default",
+            "items": [
+              {
+                "type": "FactSet",
+                "facts": [
+                  {
+                    "title": "Mentions:",
+                    "value": "<at>${MSTEAMS_PARAM_MENTIONS}</at>"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "actions": [],
+        "msteams": {
+          "entities": [
+            {
+              "type": "text",
+              "text": "<at>${MSTEAMS_PARAM_MENTIONS}</at>",
+              "mentioned": {
+                "id": "${MSTEAMS_PARAM_MENTIONS}",
+                "name": "${MSTEAMS_PARAM_MENTIONS}"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

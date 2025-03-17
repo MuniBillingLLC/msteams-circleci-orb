@@ -1,0 +1,44 @@
+description: |
+  Send a custom notification using Microsofts AdaptiveCard framework.
+  Create the payload code and paste it in your notify command's custom parameter.
+  See: https://adaptivecards.io/explorer/
+usage:
+  version: 2.1
+  orbs:
+    msteams: munibillingllc/msteams-circleci-orb@0.1.13
+  jobs:
+    notify:
+      docker:
+        - image: cimg/base:current
+      steps:
+        - msteams/notify:
+            event: always
+            custom: |
+              {
+                "type": "message",
+                "attachments": [
+                  {
+                    "contentType": "application/vnd.microsoft.card.adaptive",
+                    "content": {
+                      "type": "AdaptiveCard",
+                      "body": [
+                        {
+                          "type": "Container",
+                          "style": "default",
+                          "items": [
+                            {
+                              "type": "TextBlock",
+                              "text": "This is a text notification"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+  workflows:
+    send-notification:
+      jobs:
+        - notify:
+            context: msteams-secrets

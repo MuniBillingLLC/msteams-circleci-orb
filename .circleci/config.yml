@@ -3,6 +3,7 @@ setup: true
 orbs:
   orb-tools: circleci/orb-tools@12.3
   shellcheck: circleci/shellcheck@3.2
+  bats: circleci/bats@1.0
 
 filters: &filters
   tags:
@@ -20,10 +21,13 @@ workflows:
           filters: *filters
       - shellcheck/check:
           filters: *filters
+      - bats/run:
+          path: ./src/tests
+          filters: *filters
       # Triggers the next workflow in the Orb Development Kit.
       - orb-tools/continue:
           pipeline_number: << pipeline.number >>
           vcs_type: << pipeline.project.type >>
           orb_name: msteams-circleci-orb
-          requires: [orb-tools/lint, orb-tools/pack, orb-tools/review, shellcheck/check]
+          requires: [orb-tools/lint, orb-tools/pack, orb-tools/review, shellcheck/check, bats/run]
           filters: *filters

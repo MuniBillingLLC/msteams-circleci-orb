@@ -28,7 +28,17 @@ jobs:
     steps:
       - checkout
       # Run your orb's commands to validate them.
-      - msteams-circleci-orb/greet
+      - run:
+          name: Setup environment variables
+          command: |
+            echo "export MSTEAMS_WEBHOOK='https://example.com/some/path'" >> "$BASH_ENV"
+            echo "export RUNNING_BATS_TESTS='true'" >> "$BASH_ENV"
+      - msteams-circleci-orb/notify:
+          debug: true
+          step_name: "success template"
+          template: basic_success_1
+          event: always
+
 workflows:
   test-deploy:
     jobs:
